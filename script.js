@@ -1,3 +1,19 @@
+let playerWins = 0;
+let computerWins = 0;
+let statText = document.querySelector('.results');
+let roundText = document.createElement('p');
+let playerWinsText = document.createElement('p');
+let computerWinsText = document.createElement('p');
+let resultsText = document.createElement('p');
+statText.appendChild(roundText);
+statText.appendChild(playerWinsText);
+statText.appendChild(computerWinsText);
+statText.appendChild(resultsText);
+playerWinsText.textContent = "Player Wins: " + playerWins;
+computerWinsText.textContent = "Computer Wins: " + computerWins;
+let round = 0;
+
+
 const moves = {
     0: "Rock",
     1: "Paper",
@@ -52,48 +68,42 @@ function win(playerSelection, computerSelection) {
     }
 }
 
-function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection[0].toUpperCase() + playerSelection.slice(1).toLowerCase();
-    return win(playerSelection, computerSelection);
+let playRound = function(e) {
+    let playerSelection = e.target.value;
+    let computerSelection = getComputerChoice();
+    result = win(playerSelection, computerSelection);
 
-}
-
-function playGame() {
-    let playerWins = 0;
-    let playerSelection;
-    let computerSelection;
-    let result;
-
-    for(let i = 0; i < 5; i++) {
-        playerSelection = prompt("Please enter 'Rock', 'Paper', or 'Scissors'");
-        computerSelection = getComputerChoice();
-        result = playRound(playerSelection, computerSelection);
-        playerWins += result;
-
-        switch(result) {
-            case 1:
-                console.log("You Win! " + playerSelection + " beats " + computerSelection);
-                break;
-            case 0:
-                console.log("You Tie!");
-                break;
-            case -1:
-                console.log("You Lose! " + computerSelection + " beats " + playerSelection);
-                break;
-            default:
-                console.log("Unable to process game! Did you enter valid input?");
-                i--;
-                break;
-        }
-        
+    switch(result) {
+        case 1:
+            roundText.textContent = ("You Win! " + playerSelection + " beats " + computerSelection);
+            playerWins++;
+            playerWinsText.textContent = "Player Wins: " + playerWins;
+            break;
+        case 0:
+            roundText.textContent = ("You Tie!");
+            break;
+        case -1:
+            roundText.textContent = ("You Lose! " + computerSelection + " beats " + playerSelection);
+            computerWins++;
+            computerWinsText.textContent = "Computer Wins: " + computerWins;
+            break;
+        default:
+            roundText.textContent = ("Unable to process game! Did you enter valid input?");
+            break;
     }
-
-    if(playerWins > 0) {
-        console.log("Congrats! You beat the Computer!");
-    } else if (playerWins === 0) {
-        console.log("Congrats! You tied the Computer!");
-    } else {
-        console.log("Better luck next time!");
+    round++;
+    if(round >= 5){
+        playerWins >= computerWins ? 
+            resultsText.textContent = "Congrats! You Won!" :
+            resultsText.textContent = "You Lose! Better Luck Next Time!";
+        buttons.forEach((button) => {
+            button.removeEventListener('click', playRound);
+        });    
     }
 }
+
+let buttons = document.querySelectorAll('button.move');
+buttons.forEach((button) => {
+    button.addEventListener('click', playRound);
+});
 
